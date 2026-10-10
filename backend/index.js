@@ -1,8 +1,7 @@
-require("dotenv").config();
-
-const express = require("express");
-const cors = require("cors");
-const pool = require("./db");
+import "dotenv/config";
+import express from "express";
+import cors from "cors";
+import pool from "./db.js";
 
 const app = express();
 const PORT = 5000;
