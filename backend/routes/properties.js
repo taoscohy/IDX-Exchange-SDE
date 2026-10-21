@@ -132,4 +132,44 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Both tables use VARCHAR(255); preserve leading zeros and alphanumeric IDs.
+router.param("listingId", (req, res, next, listingId) => {
+  if (!/^[A-Za-z0-9_-]{1,255}$/.test(listingId)) {
+    return res.status(400).json({
+      error: "listingId must contain 1 to 255 letters, digits, underscores, or hyphens"
+    });
+  }
+  next();
+});
+
+router.get("/:listingId/openhouses", async (req, res) => {
+  const [properties] = await pool.execute(
+    "SELECT L_ListingID FROM rets_property WHERE L_ListingID = ? LIMIT 1",
+    [req.params.listingId]
+  );
+
+  if (properties.length === 0) {
+    return res.status(404).json({ error: "Property not found" });
+  }
+
+  const [events] = await pool.execute(
+    `SELECT * FROM rets_openhouse WHERE L_ListingID = ?
+     ORDER BY OpenHouseDate ASC, OH_StartTime ASC, id ASC`,
+    [req.params.listingId]
+  );
+  res.json(events);
+});
+
+router.get("/:listingId", async (req, res) => {
+  const [properties] = await pool.execute(
+    "SELECT * FROM rets_property WHERE L_ListingID = ? LIMIT 1",
+    [req.params.listingId]
+  );
+
+  if (properties.length === 0) {
+    return res.status(404).json({ error: "Property not found" });
+  }
+  res.json(properties[0]);
+});
+
 export default router;
