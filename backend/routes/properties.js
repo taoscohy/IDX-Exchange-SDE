@@ -117,7 +117,8 @@ router.get("/", async (req, res) => {
 
     // Get just the properties needed for the current page
     const [results] = await pool.execute(
-      `SELECT L_ListingID, L_Address, L_City, L_SystemPrice
+      `SELECT L_ListingID, L_Address, L_City, L_State, L_SystemPrice,
+              L_Photos, L_Keyword2, LM_Dec_3, LM_Int2_3
        FROM rets_property
        ${where}
        ORDER BY L_ListingID

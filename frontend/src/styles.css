@@ -1,0 +1,54 @@
+:root { color: #203731; background: #f7f8f5; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-synthesis: none; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+button { font: inherit; }
+.site-header { background: #fff; border-bottom: 1px solid #dfe5df; }
+.header-inner { max-width: 1320px; margin: auto; min-height: 80px; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.brand { display: flex; align-items: center; gap: 10px; font-size: 21px; font-weight: 750; letter-spacing: -.6px; }
+.brand-mark { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; background: #174e43; color: #fff; font-size: 30px; }
+.header-label { font-size: 14px; color: #567067; }
+.listings-page { max-width: 1320px; margin: auto; padding: 0 32px 64px; min-height: calc(100vh - 158px); }
+.page-intro { padding: 58px 0 40px; border-bottom: 1px solid #dfe5df; }
+.eyebrow { color: #356b5c; font-size: 11px; font-weight: 750; letter-spacing: 2px; }
+h1 { font-size: clamp(32px, 4vw, 48px); line-height: 1.15; letter-spacing: -1.6px; margin: 16px 0; }
+.page-intro > p:last-child { color: #5c6d65; font-size: 17px; line-height: 1.6; }
+.results-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 24px 0; }
+.results-heading h2 { margin: 0; font-size: 21px; letter-spacing: -.4px; }
+.results-heading p { margin: 0; color: #5c6d65; font-size: 14px; }
+.property-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.property-card { overflow: hidden; border: 1px solid #dfe5df; border-radius: 14px; background: white; box-shadow: 0 2px 5px #18372b06; transition: transform .18s ease, box-shadow .18s ease; }
+.property-card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px #18372b16; }
+.property-photo { aspect-ratio: 16 / 10; background: #e8eee7; overflow: hidden; }
+.property-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.photo-placeholder { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: #617768; font-size: 13px; background: linear-gradient(135deg, #edf1e8, #dfe9e3); }
+.photo-placeholder > span:first-child { font-size: 56px; line-height: 1; }
+.property-content { padding: 22px; }
+.property-price { margin: 0 0 12px; font-size: 27px; font-weight: 750; letter-spacing: -.7px; }
+.property-content h2 { font-size: 16px; margin: 0 0 6px; overflow-wrap: anywhere; }
+.property-location { color: #5c6d65; font-size: 14px; margin: 0; min-height: 20px; }
+.property-facts { display: grid; grid-template-columns: 1fr 1fr 1.2fr; border-top: 1px solid #edf0eb; padding-top: 18px; margin: 18px 0 0; gap: 12px; }
+.property-facts div { display: flex; flex-direction: column-reverse; gap: 4px; }
+.property-facts dt { font-size: 12px; color: #5c6d65; }
+.property-facts dd { font-size: 16px; font-weight: 650; margin: 0; }
+.status-panel { margin: 32px 0; padding: 56px 24px; border: 1px solid #dfe5df; border-radius: 14px; background: #fff; text-align: center; line-height: 1.6; }
+.status-panel h2 { font-size: 22px; }
+.status-panel p { max-width: 620px; margin: 12px auto 20px; color: #5c6d65; }
+.error-panel { border-color: #dfc4b5; }
+button { border: none; border-radius: 7px; padding: 12px 22px; color: #fff; background: #174e43; font-weight: 600; cursor: pointer; }
+button:hover { background: #236954; }
+:focus-visible { outline: 3px solid #438a74; outline-offset: 4px; }
+.spinner { display: block; width: 28px; height: 28px; margin: 0 auto 14px; border: 3px solid #dfe5df; border-top-color: #174e43; border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.site-footer { padding: 26px 24px; text-align: center; border-top: 1px solid #dfe5df; color: #5c6d65; font-size: 12px; }
+.skip-link { position: absolute; top: -80px; left: 16px; background: #fff; color: #174e43; padding: 12px; z-index: 1; }
+.skip-link:focus { top: 12px; }
+@media (max-width: 1000px) { .property-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) {
+  .header-inner { padding: 16px 20px; min-height: 72px; }
+  .header-label { display: none; }
+  .listings-page { padding: 0 20px 40px; }
+  .page-intro { padding: 36px 0 24px; }
+  .results-heading { flex-direction: column; gap: 10px; }
+  .property-grid { grid-template-columns: 1fr; gap: 20px; }
+}
+@media (prefers-reduced-motion: reduce) { .property-card { transition: none; } .spinner { animation: none; } }
