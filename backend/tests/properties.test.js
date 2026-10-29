@@ -1,4 +1,3 @@
-
 import { jest, test, expect } from "@jest/globals";
 import request from "supertest";
 
@@ -21,6 +20,10 @@ test("price and bedroom filters work together", async () => {
 
   expect(response.status).toBe(200);
   expect(response.body.total).toBe(1);
+
+  for (const column of ["L_Photos", "L_State", "L_Keyword2", "LM_Dec_3", "LM_Int2_3"]) {
+    expect(mockExecute.mock.calls[1][0]).toContain(column);
+  }
 
   expect(mockExecute).toHaveBeenNthCalledWith(
     1,
