@@ -40,6 +40,10 @@ h1 { font-size: clamp(32px, 4vw, 48px); line-height: 1.15; letter-spacing: -1.6p
 .error-panel { border-color: #dfc4b5; }
 button { border: none; border-radius: 7px; padding: 12px 22px; color: #fff; background: #174e43; font-weight: 600; cursor: pointer; }
 button:hover { background: #236954; }
+.pagination { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 32px; }
+.pagination button { padding: 10px 14px; }
+.pagination button[aria-current="page"] { outline: 2px solid #174e43; outline-offset: 2px; }
+.pagination button:disabled { opacity: .45; cursor: default; background: #174e43; }
 :focus-visible { outline: 3px solid #438a74; outline-offset: 4px; }
 .spinner { display: block; width: 28px; height: 28px; margin: 0 auto 14px; border: 3px solid #dfe5df; border-top-color: #174e43; border-radius: 50%; animation: spin .8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
