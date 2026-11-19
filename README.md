@@ -1,157 +1,145 @@
-# IDX Exchange — Week 5
+# IDX Exchange — Week 8
 
-React listings frontend with the existing Express/MySQL backend. This implements
-the first page of listings only: no filter form, pagination controls, detail UI,
-routing, carousel, or maps.
+Property detail pages build on the existing listings, filters, pagination, and
+Express/MySQL APIs from Weeks 1–7. Work is on
+`feat/week-8-Property-Detail-Page–End-to-End`. No Week 9–12 features are included.
 
 ## Run locally
 
-Use Node.js and npm (verified with Node 24.21.0 and npm 11.19.0). Start Docker
-Desktop and unpause it if necessary. The existing database and backend `.env`
-must already be configured; no credentials belong in the frontend.
-
-Start the existing MySQL container:
+Use the existing backend `.env` and MySQL database. Start Docker Desktop, then:
 
 ```sh
 docker start idx-mysql-local
 ```
 
-In one terminal:
+Start the backend in one terminal:
 
 ```sh
-cd /Users/taoscohy/Desktop/IDX/backend
+cd backend
 npm ci
 npm run dev
 ```
 
-In another terminal:
+Start React in another terminal:
 
 ```sh
-cd /Users/taoscohy/Desktop/IDX/frontend
+cd frontend
 npm ci
 npm start
 ```
 
-Open http://localhost:3000, or on macOS:
+Open http://localhost:3000. React uses port 3000 and proxies `/api` to Express
+on port 5000. Keep port 3000 available. The existing backend `.env` supplies
+`DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, and `DB_NAME` (`rets`).
 
-```sh
-open http://localhost:3000
-```
+## Google Maps setup — requires your account
 
-The frontend start script sets port 3000. Keep this port available; decline any
-Create React App prompt to use another port. Express listens on port 5000.
-The backend uses `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, and `DB_NAME`
-from its existing private `.env`; `DB_NAME` should identify the `rets` database.
+1. Sign in to https://console.cloud.google.com and create a project.
+2. Link a billing account as required by Google's setup process.
+3. Under **APIs & Services → Library**, enable **Maps Embed API**.
+4. Under **APIs & Services → Credentials**, create an API key.
+5. Set its application restriction to **Websites**, allowing
+   `http://localhost:3000/*`. Set its API restriction to **Maps Embed API** only.
+6. Create `frontend/.env` and add your real key:
 
-## How the code works
+   ```dotenv
+   REACT_APP_GOOGLE_MAPS_API_KEY=your_key
+   ```
 
-1. `src/index.js` mounts `App`, which provides the header, footer, and ListingsPage.
-2. `ListingsPage` runs a `useEffect` on mount to call `fetchProperties`. It uses the
-   backend's defaults (`limit=20`, `offset=0`). Only an explicit retry starts a new
-   request; ordinary renders do not refetch.
-3. `useState` stores the response, loading flag, error message, and retry counter.
-   Updating state tells React to render the appropriate UI. The effect's cleanup
-   aborts its request; guards prevent late responses from updating an unmounted page.
-4. `fetchProperties(params, { signal })` encodes optional parameters with
-   `URLSearchParams`, uses `fetch`, checks the HTTP status, parses JSON, and checks
-   the response shape. It throws useful errors for network failures, HTTP errors,
-   malformed JSON, and unexpected responses. Abort errors remain cancellations.
-   Supported backend parameters are `city`, `zipcode`, `minPrice`, `maxPrice`,
-   `beds`, `baths`, `limit`, and `offset`. There is no filter UI in Week 5.
-5. The development server forwards `/api` requests to port 5000 using the
-   `proxy` setting in `frontend/package.json`. Relative URLs let React call the
-   backend through the same browser origin. This proxy is development-only;
-   production hosting would need to route `/api` to Express separately.
-6. Each result is passed as the `property` prop to a reusable `PropertyCard`.
-   `L_ListingID` is its React key. The card formats prices as USD and numbers with
-   separators; unknown numeric values show an em dash, while a real zero stays zero.
-7. `firstPhotoUrl` safely parses JSON strings with `try/catch`, also accepts
-   already-parsed arrays, skips invalid entries, and returns the first HTTP(S)
-   image URL. Missing or malformed photos show a local CSS placeholder. An image
-   `onError` handler switches failed downloads to the same placeholder without a
-   loop or another external placeholder request.
-8. While fetching, a status panel displays loading. Failures show an alert and
-   a Try again button. Successful empty results show a dedicated empty state.
-   Successful results display the returned count and a responsive card grid.
+7. Restart `npm start` after editing `.env` (or rebuild for a production build).
 
-The existing search SELECT was extended with the five missing card columns.
-Its validation, filters, ordering, pagination defaults, and response envelope
-remain intact. Existing detail and open-house routes were not changed.
+No API key was created or supplied. `.env` is already ignored by Git. The iframe
+appears only when the key and both valid coordinates are present. With valid
+coordinates but no key, Get Directions still works. Coordinates must be finite,
+within latitude/longitude ranges, and not blank or zero. Numeric and string zero
+values are treated as missing location data, so no map or directions link appears.
 
-## Files
+Google references: [API key setup and restrictions](https://developers.google.com/maps/documentation/embed/get-api-key)
+and [iframe embedding](https://developers.google.com/maps/documentation/embed/embedding-map).
 
-| File | Purpose |
+## Week 8 changes
+
+| Files | Change and reason |
 | --- | --- |
-| `.gitignore` | Excludes generated frontend builds and coverage. |
-| `README.md` | Run instructions, explanation, and verification record. |
-| `backend/routes/properties.js` | Adds required card columns to the existing search SELECT. |
-| `backend/tests/properties.test.js` | Checks that the search query includes the new columns. |
-| `frontend/package.json` | Create React App (`react-scripts`) scripts, React dependencies, and proxy. |
-| `frontend/package-lock.json` | Reproducible dependency versions. |
-| `frontend/public/index.html` | Accessible HTML entry document and page metadata. |
-| `frontend/src/index.js` | React root and global stylesheet import. |
-| `frontend/src/App.js` | Header, skip link, listings page, and footer. |
-| `frontend/src/styles.css` | Responsive grid, cards, hover, status panels, and reduced-motion support. |
-| `frontend/src/api/client.js` | Reusable API request and error handling. |
-| `frontend/src/api/client.test.js` | Query encoding, cancellation, response validation, and request failure tests. |
-| `frontend/src/pages/ListingsPage.js` | Fetch lifecycle, count, loading, errors, retry, empty state, and grid. |
-| `frontend/src/pages/ListingsPage.test.js` | Page states, cleanup, formatting, and failed-image behavior tests. |
-| `frontend/src/components/PropertyCard.js` | Reusable card displaying all required property fields. |
-| `frontend/src/utils/photos.js` | Defensive first-photo selection. |
-| `frontend/src/utils/photos.test.js` | Null, empty, malformed, parsed, and invalid-URL photo cases. |
+| `frontend/package.json`, `frontend/package-lock.json` | Add React Router 6, compatible with the existing React 18 setup. |
+| `frontend/src/App.js` | Route `/` to listings and `/property/:id` to details. |
+| `frontend/src/components/PropertyCard.js` | Card clicks navigate; the address remains a keyboard-accessible link. |
+| `frontend/src/components/PropertyImageCarousel.js` | Card photos cycle with previous/next buttons and an X / Y counter. Arrows stop propagation to the card. |
+| `frontend/src/components/PropertyImageGallery.js` | Main image, horizontally scrollable thumbnails, and full-screen lightbox with button and keyboard navigation. |
+| `frontend/src/components/PropertyMap.js` | Embed the coordinate-based Google map without a Maps package; provide directions in a new tab. |
+| `frontend/src/pages/PropertyDetailPage.js` | Fetch and display property details and open houses with loading, error, empty, and back-navigation states. |
+| `frontend/src/api/client.js` | Reuse existing request/error handling for the two Week 4 endpoints; preserve cancellation. |
+| `frontend/src/utils/photos.js` | Extend the existing safe parser to return all valid HTTP(S) photos, or an empty array for malformed JSON. |
+| `frontend/src/utils/format.js` | Share the existing card number/currency formatting with the detail page. |
+| `frontend/src/styles.css` | Add carousel controls, gallery/lightbox layout, detail styling, and thumbnail overflow. |
+| `frontend/src/pages/ListingsPage.test.js` | Wrap existing tests in router context. |
+| `frontend/src/pages/PropertyDetailPage.test.js` | Check the Week 8 navigation, photos, keyboard behavior, map URLs, remarks, and error cases. |
+| `README.md` | Current setup, implementation notes, and verification status. |
 
-## Checks
+The backend is unchanged. The detail page uses actual schema fields:
+`L_SystemPrice`, `L_Address`, `L_City`, `L_State`, `L_Zip`, `L_Keyword2` (beds),
+`LM_Dec_3` (baths), `LM_Int2_3` (sq ft), `YearBuilt`, and `L_Remarks`.
+Property details include listing ID, type, status, lot acres (`LotSizeAcres`,
+preserving the database's four decimal places), garage
+spaces, subdivision, school district, flooring, heating, and cooling.
+
+Open houses come from `/api/properties/:id/openhouses`. Their dates use
+`OpenHouseDate`; times use `OH_StartTime` and `OH_EndTime`, formatted as AM/PM
+without shifting the property's local event time. Failed open-house requests
+show an error rather than incorrectly claiming there are no scheduled events.
+
+## Debug challenges
+
+- **Missing remarks:** `OpenHouseRemarks` is inside `all_data`, not a top-level
+  response field. The React `OpenHouse` component parses the JSON with
+  `try/catch`, also accepts an already-parsed object, and displays nonempty remarks.
+- **Escape not firing:** a plain div does not receive keyboard focus. The
+  lightbox has `tabIndex={-1}` and receives focus through a ref when opened.
+  Its key handler handles Escape and left/right arrows, and keeps Tab focus
+  inside the modal. Closing restores focus to the main-image button.
+
+## Verification
 
 ```sh
-cd /Users/taoscohy/Desktop/IDX/backend
+cd backend
 npm test -- --runInBand --watchman=false
 
-cd /Users/taoscohy/Desktop/IDX/frontend
+cd ../frontend
 CI=true npm test -- --watchAll=false --runInBand --watchman=false
 CI=true npm run build
-
-curl http://localhost:3000/api/health
-curl http://localhost:3000/api/properties
 ```
 
-Verified October 26, 2026:
+Verified during this implementation:
 
-- 32 backend regression tests passed, including detail and open-house behavior.
-- 27 frontend tests passed. Test fixtures are isolated to test files; the app
-  itself always requests real API data.
-- Production build and development compilation succeeded.
-- React development server started on port 3000.
-- `/api/health` through port 3000 returned database connected.
-- `/api/properties` through port 3000 returned HTTP 200, total 55,212, limit 20,
-  offset 0, and 20 real rows with all eight required display fields.
-- Three sampled first-photo URLs returned HTTP 200 and `image/jpeg`.
-- `git diff --check` passed.
+- 65 frontend tests passed, including all 52 existing regression tests and focused
+  checks for lot acres and missing/zero coordinates.
+- 32 existing backend tests passed.
+- Production build compiled successfully; `git diff --check` passed.
+- Real detail and open-house requests through the React proxy returned HTTP 200.
+- `/api/properties/invalid-id` and its open-house endpoint returned HTTP 404.
+- Direct browser-style requests (`Accept: text/html`) to property URLs, including
+  `/property/invalid-id`, returned the React HTML with HTTP 200. React then
+  handles the API response and displays the appropriate page or error.
 
-The initial test attempts hit sandbox restrictions on Watchman and local server
-binding. Disabling Watchman and rerunning with local networking allowed resolved
-these environment failures. A frontend query-string compatibility test initially
-failed; switching from `URLSearchParams.size` to `toString()` fixed it.
+| Week 8 checkpoint | Verified | Remaining manual check |
+| --- | --- | --- |
+| Listings → detail → back | DOM interaction test verifies URL changes, card click, and back button. Existing filters/pagination tests pass. | Visual browser flow. |
+| Carousel and gallery, multiple/single photos | DOM tests verify wraparound, counters, stopped card navigation, thumbnail selection, one-photo behavior, and malformed-photo placeholders. Real API samples include both photo counts. | Real photo rendering and horizontal thumbnail scrolling. |
+| Lightbox opens, navigates, closes | DOM tests verify focus, left/right buttons and keys, Escape, backdrop click, image click staying open, and restored focus. CSS provides a fixed full-screen overlay. | Visual full-screen layout. |
+| Map and directions | DOM test verifies iframe coordinates, zoom, invalid/missing coordinate handling, and directions URL with `_blank`. | Live map and external directions page after Google key setup. |
+| Open-house remarks | DOM tests verify JSON/object remarks, malformed JSON, date/time formatting, empty events, and request errors. Real API confirms remarks in `all_data`. | Visual rendering of a real event. |
 
-Create React App is used as required by the internship. Its older toolchain emits
-dependency and Node/webpack deprecation notices; these did not prevent compilation
-or tests. Reference: https://create-react-app.dev/docs/proxying-api-requests-in-development/
+The latest backend test run passed all 32 tests. Live browser verification was
+attempted again: Chrome access timed out twice, and the in-app browser was
+unavailable. No visual browser verification is claimed.
+No Google Maps key was configured, so the live iframe remains unverified.
 
-Browser visual verification remains outstanding: no connected browser was
-available, and native Safari access was not approved. Consequently, desktop/mobile
-layout, visual hover appearance, photo display in an actual browser, and the
-browser console have not been manually verified. Automated DOM tests passed
-without React warnings. To finish that manual review, open the app, inspect the
-cards and count, resize to mobile width, and inspect the browser console. Stop
-Express and reload to exercise the error panel; restart Express and use Try again.
+Useful local examples from the existing database:
 
-## Acceptance status
+- http://localhost:3000/property/1175978785 — 34 photos and an open house with remarks.
+- http://localhost:3000/property/1114880309 — one photo and no open houses.
+- http://localhost:3000/property/1000291026 — multiple photos and no open houses.
+- http://localhost:3000/property/invalid-id — expected error panel.
 
-- Implemented and checked: frontend startup/build, real API proxy integration,
-  returned card data, count, API errors, loading/empty states, cleanup, malformed
-  photo parsing, and broken-image fallback (automated DOM tests).
-- Implemented, awaiting visual browser confirmation: responsive desktop/mobile
-  layout, rendered real photos, and hover effect.
-- Existing backend regression suite passes.
-- Work is on `feature/week5-React-Setup-and-Listings-Page`. This branch already
-  existed at the same commit as `develop`; it was checked out before edits.
-  No commits, pushes, merges, or pull requests were made.
+The imported open-house events are dated September 2026; they are displayed as
+returned by the existing API. No future-date filtering was added.
