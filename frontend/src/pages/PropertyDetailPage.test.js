@@ -53,6 +53,27 @@ test.each([["0.1234", "0.1234"], [1.5, "1.5"], [null, "—"]])(
   }
 );
 
+test("main gallery arrows wrap and synchronize thumbnails without opening the lightbox", () => {
+  render(<PropertyImageGallery photos={photos} address="Test Street" />);
+  const opener = screen.getByRole("button", { name: "Open photo lightbox" });
+  const next = screen.getByRole("button", { name: "Next photo" });
+  const previous = screen.getByRole("button", { name: "Previous photo" });
+  fireEvent.click(next);
+  expect(within(opener).getByRole("img").src).toContain("two.jpg");
+  expect(screen.getByRole("button", { name: "View photo 2" }).getAttribute("aria-pressed")).toBe("true");
+  expect(screen.getByRole("button", { name: "View photo 1" }).getAttribute("aria-pressed")).toBe("false");
+  fireEvent.click(next);
+  expect(within(opener).getByRole("img").src).toContain("one.jpg");
+  fireEvent.click(previous);
+  expect(within(opener).getByRole("img").src).toContain("two.jpg");
+  fireEvent.click(screen.getByRole("button", { name: "View photo 1" }));
+  fireEvent.click(next);
+  expect(within(opener).getByRole("img").src).toContain("two.jpg");
+  expect(screen.queryByRole("dialog")).toBeNull();
+  fireEvent.click(opener);
+  expect(within(screen.getByRole("dialog")).getByRole("img").src).toContain("two.jpg");
+});
+
 test("gallery selects thumbnails, focuses the lightbox, navigates, and closes with Escape or backdrop", () => {
   render(<PropertyImageGallery photos={photos} address="Test Street" />);
   fireEvent.click(screen.getByRole("button", { name: "View photo 2" }));
@@ -88,6 +109,7 @@ test("single-photo carousel and gallery work without navigation arrows", () => {
   fireEvent.click(screen.getByRole("button", { name: "Open photo lightbox" }));
   expect(within(screen.getByRole("dialog")).getByText("1 / 1")).toBeTruthy();
   expect(screen.queryByRole("button", { name: "Next photo" })).toBeNull();
+  expect(screen.queryByRole("button", { name: "Previous photo" })).toBeNull();
   fireEvent.keyDown(document.activeElement, { key: "ArrowRight" });
   expect(within(screen.getByRole("dialog")).getByRole("img").src).toContain("one.jpg");
   fireEvent.keyDown(document.activeElement, { key: "Escape" });

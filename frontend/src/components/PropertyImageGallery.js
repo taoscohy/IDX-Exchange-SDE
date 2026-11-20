@@ -43,9 +43,15 @@ export default function PropertyImageGallery({ photos, address }) {
 
   return (
     <section className="property-gallery" aria-label="Property photos">
-      <button ref={mainButton} className="gallery-main" aria-label="Open photo lightbox" onClick={() => setOpen(true)}>
-        <img src={images[current]} alt={`Property at ${address}, ${current + 1} of ${images.length}`} />
-      </button>
+      <div className="gallery-main-wrapper">
+        <button ref={mainButton} className="gallery-main" aria-label="Open photo lightbox" onClick={() => setOpen(true)}>
+          <img src={images[current]} alt={`Property at ${address}, ${current + 1} of ${images.length}`} />
+        </button>
+        {images.length > 1 && <>
+          <button className="photo-previous" aria-label="Previous photo" onClick={() => changePhoto(-1)}>‹</button>
+          <button className="photo-next" aria-label="Next photo" onClick={() => changePhoto(1)}>›</button>
+        </>}
+      </div>
       <div className="gallery-thumbnails" aria-label="Photo thumbnails">
         {images.map((photo, photoIndex) => (
           <button key={`${photo}-${photoIndex}`} aria-label={`View photo ${photoIndex + 1}`}
