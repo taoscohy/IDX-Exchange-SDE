@@ -48,10 +48,48 @@ button:hover { background: #236954; }
 .spinner { display: block; width: 28px; height: 28px; margin: 0 auto 14px; border: 3px solid #dfe5df; border-top-color: #174e43; border-radius: 50%; animation: spin .8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .site-footer { padding: 26px 24px; text-align: center; border-top: 1px solid #dfe5df; color: #5c6d65; font-size: 12px; }
+.property-card { cursor: pointer; }
+.property-card a { color: inherit; text-decoration: none; }
+.property-card a:hover { text-decoration: underline; }
+.property-carousel { position: relative; }
+.photo-previous, .photo-next { position: absolute; top: 50%; transform: translateY(-50%); padding: 8px 15px; font-size: 28px; background: #173b30dc; }
+.photo-previous { left: 12px; }
+.photo-next { right: 12px; }
+.photo-counter { position: absolute; bottom: 12px; right: 12px; border-radius: 6px; background: #173b30dc; color: white; padding: 5px 10px; font-size: 14px; }
+.property-detail-page { max-width: 1100px; margin: auto; padding: 24px 32px 64px; min-height: calc(100vh - 70px); }
+.back-button { margin-bottom: 24px; }
+.property-detail-header { margin-bottom: 28px; }
+.detail-stats { grid-template-columns: repeat(4, 1fr); }
+.property-detail-page section { margin-bottom: 32px; }
+.property-description { white-space: pre-line; line-height: 1.7; overflow-wrap: anywhere; }
+.property-details { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 32px; }
+.property-details div { border-bottom: 1px solid #dfe5df; padding-bottom: 12px; }
+.property-details dt { color: #5c6d65; font-size: 14px; }
+.property-details dd { margin: 6px 0 0; overflow-wrap: anywhere; }
+.gallery-main-wrapper { position: relative; }
+.gallery-main, .gallery-main:hover { display: block; padding: 0; width: 100%; background: #e8eee7; overflow: hidden; }
+.gallery-main img { display: block; width: 100%; height: min(60vw, 550px); object-fit: contain; }
+.gallery-empty { min-height: 240px; }
+.gallery-thumbnails { display: flex; gap: 10px; overflow-x: auto; padding: 12px 4px; }
+.gallery-thumbnails button { flex: 0 0 110px; height: 80px; padding: 3px; background: transparent; }
+.gallery-thumbnails button[aria-pressed="true"] { outline: 2px solid #174e43; }
+.gallery-thumbnails img { width: 100%; height: 100%; object-fit: cover; border-radius: 5px; }
+.lightbox { position: fixed; inset: 0; z-index: 10; display: flex; justify-content: center; align-items: center; background: #000e; }
+.lightbox > img { max-width: calc(100vw - 140px); max-height: 85vh; object-fit: contain; }
+.lightbox-close { position: absolute; top: 16px; right: 16px; font-size: 26px; }
+.property-map iframe { display: block; width: 100%; height: 350px; border: 0; border-radius: 10px; margin-bottom: 16px; }
+.property-map a { color: #174e43; }
+.open-houses { list-style: none; margin: 0; padding: 0; }
+.open-houses li { padding: 16px 20px; border: 1px solid #dfe5df; border-radius: 10px; background: white; margin-bottom: 12px; }
+.open-houses h3 { margin-top: 0; }
 .skip-link { position: absolute; top: -80px; left: 16px; background: #fff; color: #174e43; padding: 12px; z-index: 1; }
 .skip-link:focus { top: 12px; }
 @media (max-width: 1000px) { .property-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 600px) {
+  .property-detail-page { padding: 20px; }
+  .property-details { grid-template-columns: 1fr; }
+  .lightbox > img { max-width: calc(100vw - 100px); }
+  .lightbox .photo-previous, .lightbox .photo-next { padding: 8px 10px; }
   .header-inner { padding: 16px 20px; min-height: 72px; }
   .header-label { display: none; }
   .listings-page { padding: 0 20px 40px; }

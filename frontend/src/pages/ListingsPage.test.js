@@ -1,10 +1,17 @@
+import { MemoryRouter } from "react-router-dom";
 import { act } from "react";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render as renderUI, screen, waitFor } from "@testing-library/react";
 import ListingsPage from "./ListingsPage";
 import PropertyCard from "../components/PropertyCard";
 import { fetchProperties } from "../api/client";
 
 jest.mock("../api/client");
+
+function render(ui) {
+  return renderUI(ui, { wrapper: ({ children }) => (
+    <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>{children}</MemoryRouter>
+  ) });
+}
 
 beforeEach(() => {
   fetchProperties.mockReset();
